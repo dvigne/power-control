@@ -9,11 +9,7 @@
   <body>
     <div id="power-control">
       <div class="w-full">
-        <div class="grid grid-cols-3 gap-4">
-          <channelsettings v-on:toggle-power="togglePower($event)" bordercolor="border-green-500" backgroundcolor="bg-green-500" channel="CH1"></channelsettings>
-          <channelsettings v-on:toggle-power="togglePower($event)" bordercolor="border-yellow-300" backgroundcolor="bg-yellow-300" channel="CH2"></channelsettings>
-          <controlpanel></controlpanel>
-        </div>
+        <router-view></router-view>
       </div>
     </div>
     <script src="../../public/js/index.js" charset="utf-8"></script>
