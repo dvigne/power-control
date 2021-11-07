@@ -30,10 +30,8 @@
 </template>
 
 <script type="text/javascript">
-  import EventBus from "./EventBus";
-
   export default {
-    props: ['channel', 'bordercolor', 'backgroundcolor'],
+    props: ['channel', 'bordercolor', 'backgroundcolor', 'active'],
     data: function() {
       return {
         setVoltage: window.psu.getVoltage(this.channel),
@@ -42,12 +40,10 @@
         outCurrent: 0.0,
         maxVoltage: 32,
         maxCurrent: 3.2,
-        active: false,
         pollSupply : null
       }
     },
     created: function() {
-      EventBus.$on('toggle-power', this.togglePower);
       this.updateOutputs();
     },
     beforeDestroy: function() {
@@ -90,12 +86,6 @@
       exitEdit: function(event) {
         event.target.blur();
       },
-      togglePower: function(channel) {
-        if (this.channel == channel) {
-          this.active = !this.active;
-          window.psu.setOutput(channel, this.active ? "ON" : "OFF");
-        }
-      }
     }
   }
 </script>
