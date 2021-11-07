@@ -20,9 +20,9 @@
       <p class="w-full text-white text-4xl text-center font-bold">{{ toFixed(setPower) }} W</p>
     </div>
     <div v-bind:class="bordercolor" class="w-90 rounded-lg border-2 m-2 bg-black">
-      <p class="w-full pr-4 text-white text-8xl text-right font-bold">{{ toFixed(outVoltage) }} V</p>
+      <p class="w-full pr-4 text-white text-7xl text-right font-bold">{{ toFixed(outVoltage) }} V</p>
       <hr v-bind:class="bordercolor" class="w-90 m-2 rounded-lg border-t-2" />
-      <p class="w-full pr-4 text-white text-8xl text-right font-bold">{{ toFixed(outCurrent) }} A</p>
+      <p class="w-full pr-4 text-white text-7xl text-right font-bold">{{ toFixed(outCurrent) }} A</p>
       <hr v-bind:class="bordercolor" class="w-90 m-2 rounded-lg border-t-2" />
       <p class="w-full pr-4 text-white text-2xl text-right font-bold">{{ toFixed(outPower) }} W</p>
     </div>
@@ -32,31 +32,39 @@
 <script type="text/javascript">
   import EventBus from "./EventBus";
 
-  window.psu.connect(5025, "192.168.3.33");
   export default {
     props: ['channel', 'bordercolor', 'backgroundcolor'],
     data: function() {
       return {
         setVoltage: window.psu.getVoltage(this.channel),
-        // setVoltage: 0.0,
         setCurrent: window.psu.getCurrent(this.channel),
-        // setCurrent: 0.0,
         outVoltage: 0.0,
         outCurrent: 0.0,
-        outPower: 0.0,
         maxVoltage: 32,
         maxCurrent: 3.2,
         active: false,
+        pollSupply : null
       }
     },
     created: function() {
-      EventBus.$on('toggle-power', this.togglePower)
+      EventBus.$on('toggle-power', this.togglePower);
+      this.updateOutputs();
+    },
+    beforeDestroy: function() {
+      clearInterval(this.pollSupply);
     },
     computed: {
-      setPower: function() { return this.setVoltage * this.setCurrent; }
+      setPower: function() { return this.setVoltage * this.setCurrent; },
+      outPower: function() { return this.outVoltage * this.outCurrent; }
     },
     methods: {
       toFixed: (x) => x.toFixed(2),
+      updateOutputs: function() {
+        this.pollSupply = setInterval(() => {
+          this.outVoltage = window.psu.measureVoltage(this.channel);
+          this.outCurrent = window.psu.measureCurrent(this.channel);
+        }, 1000);
+      },
       updateVoltage: function(event) {
         var voltage = parseFloat(event.target.innerHTML);
         if (voltage >= 0 && voltage <= this.maxVoltage) {
