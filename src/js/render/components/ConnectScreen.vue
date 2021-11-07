@@ -51,7 +51,7 @@ import { required, ipAddress } from 'vuelidate/lib/validators'
         this.connecting = true;
         window.psu.connect(this.port, this.ipaddr).then(() => {
             console.log("Connection Success");
-            this.$router.push("/test");
+            this.$router.push("/control");
           }).catch((error) => {
             this.connecting = false;
             console.log(`Could not open socket:\n\t${error}`);
