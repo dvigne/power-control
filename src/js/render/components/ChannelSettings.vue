@@ -10,21 +10,21 @@
     <div v-bind:class="bordercolor" class="w-90 rounded-lg border-2 m-2 bg-black">
       <div class="flex">
         <p class="text-white text-5xl text-center font-bold flex-grow">
-          <span v-html="toFixed(setVoltage)" contenteditable @blur="updateVoltage" @keydown.enter="exitEdit" /> V
+          <span contenteditable @blur="updateVoltage" @keydown.enter="exitEdit">{{ setVoltage | toFixed}}</span> V
         </p>
         <p class="text-white text-5xl text-center font-bold flex-grow">
-          <span v-html="toFixed(setCurrent)" contenteditable @blur="updateCurrent" @keydown.enter="exitEdit" /> A
+          <span contenteditable @blur="updateCurrent" @keydown.enter="exitEdit">{{ setCurrent | toFixed}}</span> A
         </p>
       </div>
       <hr v-bind:class="bordercolor" class="w-90 m-2 rounded-lg border-t-2 bordercolor"/>
-      <p class="w-full text-white text-4xl text-center font-bold">{{ toFixed(setPower) }} W</p>
+      <p class="w-full text-white text-4xl text-center font-bold">{{ setPower | toFixed }} W</p>
     </div>
     <div v-bind:class="bordercolor" class="w-90 rounded-lg border-2 m-2 bg-black">
-      <p class="w-full pr-4 text-white text-7xl text-right font-bold">{{ toFixed(outVoltage) }} V</p>
+      <p class="w-full pr-4 text-white text-7xl text-right font-bold">{{ outVoltage | toFixed }} V</p>
       <hr v-bind:class="bordercolor" class="w-90 m-2 rounded-lg border-t-2" />
-      <p class="w-full pr-4 text-white text-7xl text-right font-bold">{{ toFixed(outCurrent) }} A</p>
+      <p class="w-full pr-4 text-white text-7xl text-right font-bold">{{ outCurrent | toFixed }} A</p>
       <hr v-bind:class="bordercolor" class="w-90 m-2 rounded-lg border-t-2" />
-      <p class="w-full pr-4 text-white text-2xl text-right font-bold">{{ toFixed(outPower) }} W</p>
+      <p class="w-full pr-4 text-white text-2xl text-right font-bold">{{ outPower | toFixed }} W</p>
     </div>
   </div>
 </template>
@@ -43,6 +43,9 @@
         pollSupply : null
       }
     },
+    filters: {
+      toFixed: (num) => num.toFixed(2)
+    },
     created: function() {
       this.updateOutputs();
     },
@@ -54,7 +57,6 @@
       outPower: function() { return this.outVoltage * this.outCurrent; }
     },
     methods: {
-      toFixed: (x) => x.toFixed(2),
       updateOutputs: function() {
         this.pollSupply = setInterval(() => {
           this.outVoltage = window.psu.measureVoltage(this.channel);
