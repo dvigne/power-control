@@ -3,10 +3,10 @@ const { contextBridge, ipcRenderer } = require('electron')
 contextBridge.exposeInMainWorld("psu",
 {
   connect: function(host, port) {
-    return ipcRenderer.sendSync('connect', [host, port]);
+    return ipcRenderer.invoke('connect', [host, port]);
   },
   disconnect: function() {
-    ipcRenderer.sendSync('disconnect');
+    return ipcRenderer.invoke('disconnect');
   },
   systemInfo: function() {
     return ipcRenderer.sendSync('systemInfo');

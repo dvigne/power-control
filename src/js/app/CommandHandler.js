@@ -18,24 +18,41 @@ SYSTem:VERSion? - Get software version
 SYSTem: STATus? - Get system status
 */
 
-var client = new net.Socket();
+let client;
 
 function handleData(cb) {
-  client.on('data', cb);
+  client.once('data', cb);
 }
 
-ipcMain.on('connect', function(event, args) {
-  console.log(`Connected to: ${args[1]} on port ${args[0]}`)
-  client.on('error', function(error) {
-    event.returnValue = [false, error];
+ipcMain.handle('connect', async function(event, args) {
+  console.log(`Connecting to: ${args[1]} on port ${args[0]}`);;
+  client = new net.Socket();
+  client.setTimeout(5000);
+  let result = new Promise((resolve,reject) => {
+    client.on('error', function(error) {
+      reject(error);
+    });
+    client.on('timeout', function() {
+      reject("Connection Timeout");
+    });
+    client.on('ready', function() {
+      console.log("Connection Success!");
+      resolve();
+    });
   });
-  client.connect(args[0], args[1], function() {
-    event.returnValue = [true];
-  });
+  client.connect(args[0], args[1]);
+  return await result;
 });
 
-ipcMain.on('disconnect', function(event, args) {
-  client.disconnect();
+ipcMain.handle('disconnect', async function(event, args) {
+  console.log("Disconnecting");
+  let result = new Promise((resolve, rejected) => {
+    client.on('close', function(success) {
+      resolve(success);
+    });
+  });
+  client.destroy();
+  return await result;
 });
 
 ipcMain.on('systemInfo', function(event, args) {
