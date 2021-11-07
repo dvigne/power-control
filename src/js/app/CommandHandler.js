@@ -152,9 +152,9 @@ ipcMain.on('version', function(event, args) {
 });
 
 ipcMain.on('status', function(event, args) {
-  client.write("SYST:VERS?", function() {
+  client.write("SYST:STAT?", function() {
     handleData(function(response) {
-      event.returnValue = parseInt(response.toString(), 16);
+      event.returnValue = parseInt(response.toString());
     });
   });
 });
