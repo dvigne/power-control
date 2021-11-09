@@ -1,9 +1,9 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, nativeImage } = require('electron');
 const path = require('path');
 
-const env = process.env.NODE_ENV || 'development';
+const icon = nativeImage.createFromPath('./assets/logos/png/128x128.png');
 
-if (env == 'development') {
+if (process.env.NODE_ENV == 'development') {
   require('electron-reload')(["public", "src/html"], {
     electron: "node_modules/.bin/electron-forge",
     electronArgv: ['start'],
@@ -12,6 +12,7 @@ if (env == 'development') {
 
 function createWindow () {
   const win = new BrowserWindow({
+    icon: icon,
     minWidth: 1080,
     minHeight: 600,
     nodeIntegration: true,
@@ -20,7 +21,9 @@ function createWindow () {
       preload: path.join(__dirname, 'preload.js')
     }
   });
-  win.webContents.openDevTools();
+  if (process.env.NODE_ENV == 'development') {
+    win.webContents.openDevTools();
+  }
   win.setMenuBarVisibility(false);
   win.loadFile('./src/html/index.html');
 }

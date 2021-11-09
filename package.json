@@ -1,5 +1,5 @@
 {
-  "name": "power-control",
+  "name": "Volt",
   "version": "1.0.0",
   "description": "Electron App for Controlling Siglent SPD3303 XE Power Supply over the VXI Network Protocol",
   "main": "src/js/app/index.js",
@@ -8,12 +8,12 @@
     "start": "electron-forge start",
     "package": "npm run dev && electron-forge package",
     "make": "npm run prod && npm run makelinux && npm run makemac && npm run makewin",
-    "makelinux": "electron-forge make",
-    "makemac": "electron-forge make -p darwin",
-    "makewin": "electron-forge make -p win32",
+    "makelinux": "NODE_ENV=production electron-forge make",
+    "makemac": "NODE_ENV=production electron-forge make -p darwin",
+    "makewin": "NODE_ENV=production electron-forge make -p win32",
     "clean": "rm -R -v -f out/*",
     "dev": "export NODE_OPTIONS=--openssl-legacy-provider && mix",
-    "prod": "export NODE_OPTIONS=--openssl-legacy-provider && mix -p",
+    "prod": "export NODE_OPTIONS=--openssl-legacy-provider NODE_ENV=production && mix -p",
     "watch": "export NODE_OPTIONS=--openssl-legacy-provider && mix watch"
   },
   "repository": {
@@ -45,6 +45,7 @@
     "resolve-url-loader": "^4.0.0",
     "sass": "^1.43.3",
     "sass-loader": "^12.2.0",
+    "squirrel": "^1.0.0",
     "tailwindcss": "^2.2.17",
     "vue": "^2.6.14",
     "vue-loader": "^15.9.8",
@@ -74,11 +75,15 @@
         },
         {
           "name": "@electron-forge/maker-deb",
-          "config": {}
+          "config": {
+            "icon": "assets/logos/png/128x128.png"
+          }
         },
         {
           "name": "@electron-forge/maker-rpm",
-          "config": {}
+          "config": {
+            "icon": "assets/logos/png/128x128.png"
+          }
         }
       ]
     }
