@@ -59,7 +59,9 @@
   },
   "config": {
     "forge": {
-      "packagerConfig": {},
+      "packagerConfig": {
+        "icon": "assets/logos/png/128x128"
+      },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
@@ -75,15 +77,11 @@
         },
         {
           "name": "@electron-forge/maker-deb",
-          "config": {
-            "icon": "assets/logos/png/128x128.png"
-          }
+          "config": {}
         },
         {
           "name": "@electron-forge/maker-rpm",
-          "config": {
-            "icon": "assets/logos/png/128x128.png"
-          }
+          "config": {}
         }
       ]
     }
