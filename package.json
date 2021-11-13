@@ -18,12 +18,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dvigne/power-control.git"
+    "url": "git+https://github.com/dvigne/volt.git"
   },
   "author": "Derick Vigne",
   "license": "GPLv3",
   "bugs": {
-    "url": "https://github.com/dvigne/power-control/issues"
+    "url": "https://github.com/dvigne/volt/issues"
   },
   "homepage": "https://github.com/dvigne/power-control#readme",
   "devDependencies": {
