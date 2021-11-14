@@ -16,6 +16,7 @@ if (process.env['WINDOWS_CODESIGN_FILE']) {
 }
 
 const commonLinuxConfig = {
+  bin: 'volt',
   icon: path.resolve(iconDir, '128x128.png'),
   mimeType: ['x-scheme-handler/volt'],
 };
