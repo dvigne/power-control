@@ -1,0 +1,37 @@
+kind: pipeline
+type: docker
+name: Linux Build
+
+platform:
+  os: linux
+
+steps:
+  - name: Compile Front End Assets
+    image: node:17
+    commands:
+      - npm install
+      - npm run prod
+
+  - name: Build Binary Files
+    image: electronuserland/builder
+    commands:
+      - apt-get update && apt-get install -y rpm fakeroot
+      - npm run makelinux
+
+  - name: Publish Artifacts
+    image: plugins/github-release
+    settings:
+      draft: true
+      api_key:
+        from_secret: github_token
+      files:
+        - out/make/deb/*
+        - out/make/rpm/*
+    when:
+      event: tag
+
+trigger:
+  branch:
+    - master
+  event:
+    - push
