@@ -16,7 +16,7 @@ steps:
     image: electronuserland/builder
     commands:
       - apt-get update && apt-get install -y rpm fakeroot
-      - npm run makelinux
+      - npm run make
 
   - name: Publish Artifacts
     image: plugins/github-release
