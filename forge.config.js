@@ -27,26 +27,6 @@ const commonDarwinConfig = {
 }
 
 const config = {
-  // hooks: {
-  //   postPackage: (forgeConfig, options) => {
-  //     if (process.platform == "darwin") {
-  //       let appPath = path.resolve(options.outputPaths[0], 'Volt.app');
-  //       console.log(`Signing App: ${appPath}`);
-  //       exec(`codesign --force --deep --sign - ${appPath}`,
-  //       (err, stdout, stderr) => {
-  //         if (err) {
-  //           console.log(`ERROR: ${err}`);
-  //         }
-  //         if (stdout) {
-  //           console.log(stdout);
-  //         }
-  //         if (stderr) {
-  //           console.log(stderr);
-  //         }
-  //       });
-  //     }
-  //   }
-  // },
   packagerConfig: {
     name: 'Volt',
     executableName: 'volt',
