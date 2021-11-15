@@ -25,8 +25,8 @@ steps:
       api_key:
         from_secret: github_token
       files:
-        - out/make/deb/*
-        - out/make/rpm/*
+        - out/make/*/*/*.deb
+        - out/make/*/*/*.rpm
     when:
       event: tag
 
