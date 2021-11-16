@@ -2,6 +2,11 @@ kind: pipeline
 type: docker
 name: Linux Build
 
+volumes:
+  - name: build
+    host:
+      path: /mnt/Build
+
 platform:
   os: linux
 
@@ -14,27 +19,19 @@ steps:
 
   - name: Build Binary Files
     image: electronuserland/builder
+    volumes:
+      - name: build
+        path: /drone/src/out
     commands:
       - apt-get update && apt-get install -y rpm fakeroot
       - npm run make
-
-  - name: Publish Artifacts
-    image: plugins/github-release
-    settings:
-      draft: true
-      api_key:
-        from_secret: github_token
-      files:
-        - out/make/*/*/*.deb
-        - out/make/*/*/*.rpm
-    when:
-      event: tag
 
 trigger:
   branch:
     - master
   event:
     - tag
+    - custom
 
 ---
 
@@ -75,18 +72,44 @@ steps:
       - xcrun altool -t osx -f ./out/make/volt-${DRONE_TAG}-x64.dmg -primary-bundle-id com.dvigne.volt --notarize-app -username ${apple_id} -p @env:APPLE_ID_PASSWORD
 
   - name: Publish Artifacts
-    image: plugins/github-release
-    settings:
-      draft: true
-      api_key:
-        from_secret: github_token
-      files:
-        - out/make/*/*/*.dmg
-    when:
-      event: tag
+    commands:
+      - cp -R -v ./out/* /Volumes/Build
 
 trigger:
   branch:
     - master
   event:
     - tag
+    - custom
+
+---
+
+kind: pipeline
+type: docker
+name: Draft Release
+
+volumes:
+  - name: artifacts
+    host:
+      path: /mnt/Build
+
+steps:
+    - name: Publish Artifacts
+      image: plugins/github-release
+      volumes:
+        - name: artifacts
+          path: /out
+      settings:
+        draft: true
+        api_key:
+          from_secret: github_token
+        files:
+          - /out/make/*/*/*.dmg
+          - /out/make/*/*/*.deb
+          - /out/make/*/*/*.rpm
+      when:
+        event: tag
+
+depends_on:
+  - Linux Build
+  - Apple Build
