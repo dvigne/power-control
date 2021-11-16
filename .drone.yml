@@ -42,15 +42,15 @@ name: Apple Build
 platform:
   os: darwin
 
-environment:
-  CI=1
-  APPLE_ID=${apple_id}
-  APPLE_ID_PASSWORD=${signing_key}
-
 steps:
   - name: Unlock Developer Certificates
+    environment:
+      KEYCHAIN_PASS:
+        from_secret: keychain_pass
+      KEYCHAIN_PATH:
+        from_secret: keychain_path
     commands:
-      - security unlock-keychain -p keychain_pass
+      - security unlock-keychain -p $KEYCHAIN_PASS $KEYCHAIN_PATH
 
   - name: Compile Front End Assets
     commands:
@@ -58,18 +58,34 @@ steps:
       - npm run prod
 
   - name: Build Binary Files
+    environment:
+      CI: 1
+      APPLE_ID:
+        from_secret: apple_id
+      APPLE_ID_PASSWORD:
+        from_secret: signing_key
     commands:
       - npm run make
 
   - name: Sign
+    environment:
+      KEYCHAIN_PATH:
+        from_secret: keychain_path
+      KEYCHAIN_CERTIFICATE_IDENTIFIER:
+        from_secret: keychain_certificate_identifier
     commands:
-      - codesign --force --deep --sign ./out/make/volt-${DRONE_TAG}-arm64.dmg
-      - codesign --force --deep --sign ./out/make/volt-${DRONE_TAG}-x64.dmg
+      - codesign --force --deep --keychain $KEYCHAIN_PATH --sign $KEYCHAIN_CERTIFICATE_IDENTIFIER ./out/make/volt-${DRONE_TAG}-arm64.dmg
+      - codesign --force --deep --keychain $KEYCHAIN_PATH --sign $KEYCHAIN_CERTIFICATE_IDENTIFIER ./out/make/volt-${DRONE_TAG}-x64.dmg
 
   - name: Notarize
+    environment:
+      APPLE_ID:
+        from_secret: apple_id
+      APPLE_ID_PASSWORD:
+        from_secret: signing_key
     commands:
-      - xcrun altool -t osx -f ./out/make/volt-${DRONE_TAG}-arm64.dmg -primary-bundle-id com.dvigne.volt --notarize-app -username ${apple_id} -p @env:APPLE_ID_PASSWORD
-      - xcrun altool -t osx -f ./out/make/volt-${DRONE_TAG}-x64.dmg -primary-bundle-id com.dvigne.volt --notarize-app -username ${apple_id} -p @env:APPLE_ID_PASSWORD
+      - xcrun altool -t osx -f ./out/make/volt-${DRONE_TAG}-arm64.dmg -primary-bundle-id com.dvigne.volt --notarize-app -username $APPLE_ID -p @env:APPLE_ID_PASSWORD
+      - xcrun altool -t osx -f ./out/make/volt-${DRONE_TAG}-x64.dmg -primary-bundle-id com.dvigne.volt --notarize-app -username $APPLE_ID -p @env:APPLE_ID_PASSWORD
 
   - name: Publish Artifacts
     commands:
