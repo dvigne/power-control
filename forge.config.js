@@ -22,7 +22,7 @@ const commonLinuxConfig = {
 };
 
 const commonDarwinConfig = {
-  name: 'Volt',
+  name: `Volt-${version}-${arch}`,
   icon: path.resolve(iconDir, '128x128.icns')
 }
 
@@ -74,8 +74,8 @@ const config = {
           exe: 'volt.exe',
           icon: path.resolve(iconDir, "128x128.ico"),
           noMsi: false,
-          setupExe: `volt-${version}-win32-${arch}-setup.exe`,
-          setupMsi: `volt-${version}-win32-${arch}-setup.msi`,
+          setupExe: `volt-${version}-${arch}-setup.exe`,
+          setupMsi: `volt-${version}-${arch}-setup.msi`,
           setupIcon: path.resolve(iconDir, '128x128.ico'),
           certificateFile: process.env['WINDOWS_CODESIGN_FILE'],
           certificatePassword: process.env['WINDOWS_CODESIGN_PASSWORD'],
