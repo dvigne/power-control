@@ -21,11 +21,6 @@ const commonLinuxConfig = {
   mimeType: ['x-scheme-handler/volt'],
 };
 
-const commonDarwinConfig = {
-  name: `Volt-${version}-${arch}`,
-  icon: path.resolve(iconDir, '128x128.icns')
-}
-
 const config = {
   packagerConfig: {
     name: 'Volt',
@@ -86,7 +81,12 @@ const config = {
       name: '@electron-forge/maker-dmg',
       platforms: ['darwin'],
       arch: ['arm64', 'x64'],
-      config: commonDarwinConfig
+      config: (arch) => {
+        return {
+          name: `Volt-${version}-${arch}`,
+          icon: path.resolve(iconDir, '128x128.icns')
+        }
+      }
     },
     {
       name: '@electron-forge/maker-deb',
