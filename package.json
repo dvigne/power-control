@@ -9,9 +9,9 @@
     "package": "npm run dev && electron-forge package",
     "make": "NODE_ENV=production electron-forge make -a x64 && electron-forge make -a arm64",
     "clean": "rm -R -v -f out/*",
-    "dev": "export NODE_OPTIONS=--openssl-legacy-provider && mix",
-    "prod": "export NODE_OPTIONS=--openssl-legacy-provider NODE_ENV=production && mix -p",
-    "watch": "export NODE_OPTIONS=--openssl-legacy-provider && mix watch"
+    "dev": "mix",
+    "prod": "NODE_ENV=production mix -p",
+    "watch": "mix watch"
   },
   "repository": {
     "type": "git",
