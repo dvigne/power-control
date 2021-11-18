@@ -15,7 +15,7 @@ steps:
     image: node:17
     commands:
       - npm install
-      - npm run prod
+      - export NODE_OPTIONS=--openssl-legacy-provider && npm run prod
 
   - name: Build Binary Files
     image: electronuserland/builder
