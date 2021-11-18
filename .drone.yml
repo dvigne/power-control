@@ -39,19 +39,13 @@ kind: pipeline
 type: exec
 name: Apple Build
 
+workspace:
+  path: /tmp/droneworkspace/src
+
 platform:
   os: darwin
 
 steps:
-  - name: Unlock Developer Certificates
-    environment:
-      KEYCHAIN_PASS:
-        from_secret: keychain_pass
-      KEYCHAIN_PATH:
-        from_secret: keychain_path
-    commands:
-      - security unlock-keychain -p $KEYCHAIN_PASS $KEYCHAIN_PATH
-
   - name: Compile Front End Assets
     commands:
       - npm install
@@ -69,13 +63,11 @@ steps:
 
   - name: Sign
     environment:
-      KEYCHAIN_PATH:
-        from_secret: keychain_path
       KEYCHAIN_CERTIFICATE_IDENTIFIER:
         from_secret: keychain_certificate_identifier
     commands:
-      - codesign --force --deep --keychain $KEYCHAIN_PATH --sign $KEYCHAIN_CERTIFICATE_IDENTIFIER ./out/make/volt-${DRONE_TAG}-arm64.dmg
-      - codesign --force --deep --keychain $KEYCHAIN_PATH --sign $KEYCHAIN_CERTIFICATE_IDENTIFIER ./out/make/volt-${DRONE_TAG}-x64.dmg
+      - codesign --force --deep --sign "$KEYCHAIN_CERTIFICATE_IDENTIFIER" ./out/make/Volt-${DRONE_TAG}-arm64.dmg
+      - codesign --force --deep --sign "$KEYCHAIN_CERTIFICATE_IDENTIFIER" ./out/make/Volt-${DRONE_TAG}-x64.dmg
 
   - name: Notarize
     environment:
@@ -84,12 +76,12 @@ steps:
       APPLE_ID_PASSWORD:
         from_secret: signing_key
     commands:
-      - xcrun altool -t osx -f ./out/make/volt-${DRONE_TAG}-arm64.dmg -primary-bundle-id com.dvigne.volt --notarize-app -username $APPLE_ID -p @env:APPLE_ID_PASSWORD
-      - xcrun altool -t osx -f ./out/make/volt-${DRONE_TAG}-x64.dmg -primary-bundle-id com.dvigne.volt --notarize-app -username $APPLE_ID -p @env:APPLE_ID_PASSWORD
+      - xcrun altool -t osx -f ./out/make/Volt-${DRONE_TAG}-arm64.dmg -primary-bundle-id com.dvigne.volt --notarize-app -username $APPLE_ID -p @env:APPLE_ID_PASSWORD
+      - xcrun altool -t osx -f ./out/make/Volt-${DRONE_TAG}-x64.dmg -primary-bundle-id com.dvigne.volt --notarize-app -username $APPLE_ID -p @env:APPLE_ID_PASSWORD
 
   - name: Publish Artifacts
     commands:
-      - cp -R -v ./out/* /Volumes/Build
+      - cp -R -v ./out/make /Volumes/Build
 
 trigger:
   branch:
@@ -120,7 +112,7 @@ steps:
         api_key:
           from_secret: github_token
         files:
-          - /out/make/*/*/*.dmg
+          - /out/make/*.dmg
           - /out/make/*/*/*.deb
           - /out/make/*/*/*.rpm
       when:

@@ -45,8 +45,7 @@ const config = {
       'gatekeeper-assess': false,
       entitlements: 'entitlements.plist',
       'entitlements-inherit': 'entitlements.plist',
-      'signature-flags': 'library',
-      keychain: process.env.KEYCHAIN_PATH
+      'signature-flags': 'library'
     },
   },
   makers: [
