@@ -46,6 +46,7 @@ const config = {
       entitlements: 'entitlements.plist',
       'entitlements-inherit': 'entitlements.plist',
       'signature-flags': 'library',
+      keychain: process.env.KEYCHAIN_PATH
     },
   },
   makers: [
